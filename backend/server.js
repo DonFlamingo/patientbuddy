@@ -6,6 +6,7 @@ import OpenAI from 'openai';
 import bodyParser from 'body-parser';
 import auth from './middleware/auth.js';
 import authRoutes from './routes/auth.js';
+import adminRoutes from './routes/admin.js';
 import Conversation from './models/Conversation.js';
 
 // Load environment variables from the .env file
@@ -26,6 +27,9 @@ app.use(bodyParser.json());
 
 // Auth routes
 app.use('/api/auth', authRoutes);
+
+// Admin routes
+app.use('/api/admin', adminRoutes);
 
 // Conversation history routes
 app.get('/api/conversations', auth, async (req, res) => {

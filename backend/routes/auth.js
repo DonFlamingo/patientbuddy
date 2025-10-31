@@ -33,9 +33,9 @@ router.post('/signup', async (req, res) => {
         await user.save();
 
         // Generate JWT token
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-        res.status(201).json({ token, user: { id: user._id, email: user.email, username: user.username } });
+        res.status(201).json({ token, user: { id: user._id, email: user.email, username: user.username, role: user.role } });
     } catch (error) {
         console.error('Signup error:', error);
         res.status(500).json({ error: 'Internal server error.' });
@@ -64,9 +64,9 @@ router.post('/login', async (req, res) => {
         }
 
         // Generate JWT token
-        const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        const token = jwt.sign({ userId: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
 
-        res.json({ token, user: { id: user._id, email: user.email } });
+        res.json({ token, user: { id: user._id, email: user.email, role: user.role } });
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({ error: 'Internal server error.' });
@@ -75,7 +75,7 @@ router.post('/login', async (req, res) => {
 
 // Token verification endpoint
 router.get('/verify', auth, (req, res) => {
-    res.json({ valid: true, user: { id: req.user._id, email: req.user.email } });
+    res.json({ valid: true, user: { id: req.user._id, email: req.user.email, role: req.user.role } });
 });
 
 export default router;
