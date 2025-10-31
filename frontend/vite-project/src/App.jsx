@@ -3,9 +3,11 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Chat from './components/Chat';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import AdminDashboard from './components/AdminDashboard';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -15,17 +17,21 @@ function App() {
       fetch('http://142.93.195.191:3000/api/auth/verify', {
         headers: { 'Authorization': `Bearer ${token}` }
       })
-      .then(res => {
-        if (res.ok) {
+      .then(res => res.json())
+      .then(data => {
+        if (data.user) {
           setIsAuthenticated(true);
+          setUser(data.user);
         } else {
           localStorage.removeItem('token');
           setIsAuthenticated(false);
+          setUser(null);
         }
       })
       .catch(() => {
         localStorage.removeItem('token');
         setIsAuthenticated(false);
+        setUser(null);
       })
       .finally(() => setIsLoading(false));
     } else {
@@ -53,11 +59,19 @@ function App() {
           path="/"
           element={
             isAuthenticated ? (
-              <main>
-                <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
-                  <Chat onLogout={handleLogout} />
-                </div>
-              </main>
+              user?.role === 'admin' ? (
+                <main>
+                  <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
+                    <AdminDashboard />
+                  </div>
+                </main>
+              ) : (
+                <main>
+                  <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
+                    <Chat onLogout={handleLogout} />
+                  </div>
+                </main>
+              )
             ) : (
               <Navigate to="/login" />
             )
