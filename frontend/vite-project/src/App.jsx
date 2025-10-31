@@ -59,21 +59,27 @@ function App() {
           path="/"
           element={
             isAuthenticated ? (
-              user?.role === 'admin' ? (
-                <main>
-                  <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
-                    <AdminDashboard />
-                  </div>
-                </main>
-              ) : (
-                <main>
-                  <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
-                    <Chat onLogout={handleLogout} />
-                  </div>
-                </main>
-              )
+              <main>
+                <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
+                  <Chat onLogout={handleLogout} user={user} />
+                </div>
+              </main>
             ) : (
               <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            isAuthenticated && user?.role === 'admin' ? (
+              <main>
+                <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
+                  <AdminDashboard />
+                </div>
+              </main>
+            ) : (
+              <Navigate to="/" />
             )
           }
         />

@@ -1,5 +1,7 @@
-# TODO: Fix Signup 500 Error
+# TODO: Admin Dashboard Enhancements
 
-- [x] Update backend/models/User.js to include username field (required, unique, lowercase, trimmed)
-- [x] Modify backend/routes/auth.js signup route to auto-generate unique username from email prefix and save it
-- [x] Test the signup process to ensure no more 500 errors
+- [x] Implement tabbed interface for User Management and Conversation Logs
+- [x] Add user role management with dropdown selectors
+- [x] Improve conversation log display with better message formatting
+- [x] Add proper styling and responsive design
+- [x] Test admin dashboard functionality

@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import ChatMessage from './ChatMessage';
 import { PaperAirplaneIcon, ChatBubbleLeftRightIcon } from '@heroicons/react/24/solid';
 
-function Chat({ onLogout }) {
+function Chat({ onLogout, user }) {
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -210,12 +210,22 @@ function Chat({ onLogout }) {
                                     <span className="text-pink-600">Patient</span>Buddy
                                 </h1>
                             </div>
-                            <button
-                                onClick={onLogout}
-                                className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                            >
-                                Logout
-                            </button>
+                            <div className="flex items-center gap-4">
+                                {user?.role === 'admin' && (
+                                    <button
+                                        onClick={() => window.location.href = '/admin'}
+                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                                    >
+                                        Admin Dashboard
+                                    </button>
+                                )}
+                                <button
+                                    onClick={onLogout}
+                                    className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
+                                >
+                                    Logout
+                                </button>
+                            </div>
                         </div>
                     </div>
 
