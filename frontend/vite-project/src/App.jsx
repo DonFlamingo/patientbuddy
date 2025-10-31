@@ -42,6 +42,7 @@ function App() {
   const handleLogout = () => {
     localStorage.removeItem('token');
     setIsAuthenticated(false);
+    setUser(null);
   };
 
   if (isLoading) {
@@ -72,20 +73,26 @@ function App() {
         <Route
           path="/admin"
           element={
-            isAuthenticated && user?.role === 'admin' ? (
-              <main>
-                <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-blue-50 flex items-center justify-center">
-                  <AdminDashboard />
-                </div>
-              </main>
+            isAuthenticated ? (
+              user?.role === 'admin' ? (
+                <main>
+                  <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-blue-50">
+                    <AdminDashboard />
+                  </div>
+                </main>
+              ) : (
+                // If logged in but not admin, go home
+                <Navigate to="/" replace={true} />
+              )
             ) : (
-              <Navigate to="/" />
+              // If not logged in, go to login
+              <Navigate to="/login" replace={true} />
             )
           }
         />
         <Route
           path="/login"
-          element={isAuthenticated ? <Navigate to="/" /> : <Login setIsAuthenticated={setIsAuthenticated} />}
+          element={isAuthenticated ? <Navigate to="/" /> : <Login onLoginSuccess={(user) => { setUser(user); setIsAuthenticated(true); }} onLoginFailure={() => { setUser(null); setIsAuthenticated(false); }} />}
         />
         <Route
           path="/signup"

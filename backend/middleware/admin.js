@@ -1,6 +1,8 @@
 import jwt from 'jsonwebtoken';
+import User from '../models/User.js';
 
-const adminAuth = (req, res, next) => {
+// Admin middleware: verify token, fetch user from DB, and ensure role is admin.
+const adminAuth = async (req, res, next) => {
     try {
         const token = req.header('Authorization')?.replace('Bearer ', '');
         if (!token) {
@@ -8,11 +10,19 @@ const adminAuth = (req, res, next) => {
         }
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.role !== 'admin') {
+
+        // Ensure the user still exists and get the latest role from DB
+        const user = await User.findById(decoded.userId);
+        if (!user) {
+            return res.status(401).json({ error: 'Invalid token.' });
+        }
+
+        if (user.role !== 'admin') {
             return res.status(403).json({ error: 'Access denied. Admin role required.' });
         }
 
-        req.user = decoded;
+        // Attach full user document to request for downstream handlers
+        req.user = user;
         next();
     } catch (error) {
         res.status(401).json({ error: 'Invalid token.' });

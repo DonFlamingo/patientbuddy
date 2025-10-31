@@ -12,11 +12,6 @@ import Conversation from './models/Conversation.js';
 // Load environment variables from the .env file
 dotenv.config();
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/patientbuddy')
-    .then(() => console.log('Connected to MongoDB Atlas'))
-    .catch(err => console.error('MongoDB connection error:', err));
-
 // Initialize Express app and middleware
 const app = express();
 // The fix: Add the exposedHeaders option to the CORS configuration
@@ -100,10 +95,15 @@ app.post('/api/chat', auth, async (req, res) => {
         );
 
         // Save user message to DB
-        conversation.messages.push({
+        const userMsg = {
             role: 'user',
-            content: message
-        });
+            content: message,
+            timestamp: new Date()
+        };
+        conversation.messages.push(userMsg);
+
+        // Persist the user's message immediately so it's not lost if streaming fails
+        await conversation.save();
 
         // Run the Assistant and stream the response
         const stream = openai.beta.threads.runs.createAndStream(
@@ -130,11 +130,13 @@ app.post('/api/chat', auth, async (req, res) => {
             }
         }
 
-        // Save assistant message to DB
-        conversation.messages.push({
+        // Save assistant message to DB with timestamp
+        const assistantMsg = {
             role: 'assistant',
-            content: assistantMessage
-        });
+            content: assistantMessage,
+            timestamp: new Date()
+        };
+        conversation.messages.push(assistantMsg);
 
         await conversation.save();
 
@@ -147,7 +149,18 @@ app.post('/api/chat', auth, async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on port http://142.93.195.191:${PORT}`);
-});
+// Only start server if this file is run directly
+if (process.env.NODE_ENV !== 'test') {
+    const PORT = process.env.PORT || 3000;
+    // Connect to MongoDB
+    mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/patientbuddy')
+        .then(() => {
+            app.listen(PORT, '0.0.0.0', () => {
+                console.log(`Server is running on port http://142.93.195.191:${PORT}`);
+            });
+            console.log('Connected to MongoDB Atlas');
+        })
+        .catch(err => console.error('MongoDB connection error:', err));
+}
+
+export default app;

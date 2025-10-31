@@ -28,9 +28,10 @@ router.post('/signup', async (req, res) => {
             counter++;
         }
 
-        // Create new user
-        const role = email === 'admin@patientbuddy.com' ? 'admin' : 'user'; // Temporary: set admin for this email
-        const user = new User({ email, username, password, role });
+    // Create new user (always default to 'user' role).
+    // Admin users must be created via the seed script or manually in the database.
+    const role = 'user';
+    const user = new User({ email, username, password, role });
         await user.save();
 
         // Generate JWT token
