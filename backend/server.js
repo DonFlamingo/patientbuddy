@@ -13,8 +13,8 @@ import Conversation from './models/Conversation.js';
 dotenv.config();
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Connected to MongoDB'))
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/patientbuddy')
+    .then(() => console.log('Connected to MongoDB Atlas'))
     .catch(err => console.error('MongoDB connection error:', err));
 
 // Initialize Express app and middleware
@@ -59,7 +59,7 @@ app.get('/api/conversations/:threadId', auth, async (req, res) => {
 });
 
 // Initialize the OpenAI client with the API key from environment variables
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY || 'dummy' });
 
 // This is the ID of the Assistant you created on platform.openai.com
 const ASSISTANT_ID = process.env.ASSISTANT_ID;

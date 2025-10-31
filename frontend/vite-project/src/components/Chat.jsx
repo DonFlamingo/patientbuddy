@@ -211,14 +211,6 @@ function Chat({ onLogout, user }) {
                                 </h1>
                             </div>
                             <div className="flex items-center gap-4">
-                                {user?.role === 'admin' && (
-                                    <button
-                                        onClick={() => window.location.href = '/admin'}
-                                        className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                                    >
-                                        Admin Dashboard
-                                    </button>
-                                )}
                                 <button
                                     onClick={onLogout}
                                     className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"

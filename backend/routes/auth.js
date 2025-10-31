@@ -29,7 +29,8 @@ router.post('/signup', async (req, res) => {
         }
 
         // Create new user
-        const user = new User({ email, username, password });
+        const role = email === 'admin@patientbuddy.com' ? 'admin' : 'user'; // Temporary: set admin for this email
+        const user = new User({ email, username, password, role });
         await user.save();
 
         // Generate JWT token

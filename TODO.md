@@ -1,7 +1,8 @@
-# TODO: Admin Dashboard Enhancements
+# TODO: Implement "Sign in as Admin" Feature
 
-- [x] Implement tabbed interface for User Management and Conversation Logs
-- [x] Add user role management with dropdown selectors
-- [x] Improve conversation log display with better message formatting
-- [x] Add proper styling and responsive design
-- [x] Test admin dashboard functionality
+- [x] Update Login.jsx: Add state for sign-in mode (regular or admin)
+- [x] Update Login.jsx: Add UI elements for two sign-in options (regular and admin)
+- [x] Update Login.jsx: Modify handleSubmit logic to redirect based on mode and role
+- [x] Update Chat.jsx: Remove the admin dashboard button and related logic
+- [x] Test the login flows to ensure proper redirection and access control
+- [x] Create admin user with email admin@patientbuddy.com and password admin123

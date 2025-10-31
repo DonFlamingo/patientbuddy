@@ -6,6 +6,7 @@ function Login({ setIsAuthenticated }) {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const [isAdminLogin, setIsAdminLogin] = useState(false);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
@@ -25,7 +26,17 @@ function Login({ setIsAuthenticated }) {
             if (response.ok) {
                 localStorage.setItem('token', data.token);
                 setIsAuthenticated(true);
-                navigate('/');
+                if (isAdminLogin) {
+                    if (data.user.role === 'admin') {
+                        navigate('/admin');
+                    } else {
+                        setError('Only admins can use this sign-in option.');
+                        localStorage.removeItem('token');
+                        setIsAuthenticated(false);
+                    }
+                } else {
+                    navigate('/');
+                }
             } else {
                 setError(data.error || 'Login failed');
             }
@@ -81,13 +92,28 @@ function Login({ setIsAuthenticated }) {
                             />
                         </div>
                     </div>
-                    <div>
+                    <div className="space-y-3">
                         <button
-                            type="submit"
+                            type="button"
                             disabled={isLoading}
                             className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50"
+                            onClick={() => {
+                                setIsAdminLogin(false);
+                                document.querySelector('form').requestSubmit();
+                            }}
                         >
-                            {isLoading ? 'Signing in...' : 'Sign in'}
+                            {isLoading && !isAdminLogin ? 'Signing in...' : 'Sign in'}
+                        </button>
+                        <button
+                            type="button"
+                            disabled={isLoading}
+                            className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                            onClick={() => {
+                                setIsAdminLogin(true);
+                                document.querySelector('form').requestSubmit();
+                            }}
+                        >
+                            {isLoading && isAdminLogin ? 'Signing in as Admin...' : 'Sign in as Admin'}
                         </button>
                     </div>
                     <div className="text-center">
