@@ -4,6 +4,7 @@ import Chat from './components/Chat';
 import Login from './components/Login';
 import Signup from './components/Signup';
 import AdminDashboard from './components/AdminDashboard';
+import ResetPassword from './components/ResetPassword';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -97,6 +98,10 @@ function App() {
         <Route
           path="/signup"
           element={isAuthenticated ? <Navigate to="/" /> : <Signup setIsAuthenticated={setIsAuthenticated} />}
+        />
+        <Route
+          path="/reset-password/:token"
+          element={isAuthenticated ? <Navigate to="/" /> : <ResetPassword />}
         />
       </Routes>
     </Router>

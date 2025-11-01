@@ -9,6 +9,29 @@ function Login({ onLoginSuccess, onLoginFailure }) {
     const [isLoadingAdmin, setIsLoadingAdmin] = useState(false);
     const navigate = useNavigate();
 
+    const handleForgotPassword = async () => {
+        if (!email) {
+            setError('Please enter your email address first');
+            return;
+        }
+        try {
+            const response = await fetch('http://142.93.195.191:3000/api/auth/forgot-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                alert('If an account exists with this email, you will receive password reset instructions.');
+            } else {
+                setError(data.error || 'Failed to process request');
+            }
+        } catch (err) {
+            setError('Failed to send reset request. Please try again.');
+        }
+    };
+
     const handleLogin = async (isAdminLogin = false) => {
         if (isAdminLogin) {
             setIsLoadingAdmin(true);
@@ -103,6 +126,15 @@ function Login({ onLoginSuccess, onLoginFailure }) {
                                 className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-pink-500 focus:border-pink-500"
                             />
                         </div>
+                    </div>
+                    <div className="flex items-center justify-end">
+                        <button
+                            type="button"
+                            onClick={handleForgotPassword}
+                            className="text-sm text-pink-600 hover:text-pink-500"
+                        >
+                            Forgot your password?
+                        </button>
                     </div>
                     <div className="space-y-3">
                         <button
